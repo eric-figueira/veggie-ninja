@@ -1,6 +1,7 @@
 import random
 import pygame
 from random import randint
+from pygame.locals import *
 import math
 
 
@@ -15,10 +16,10 @@ NUMBER_OF_VEGETABLES = 2
 
 # Inicializar jogo e configurar
 pygame.init()
+
 screen = pygame.display.set_mode([SCREEN_WIDTH, SCREEN_HEIGHT])
-pygame.display.set_caption("Veggie Ninja")
-pygame.display.set_icon(pygame.image.load("assets/images/logo.png"))
 bg = pygame.transform.scale(pygame.image.load("assets/images/background_image.jpg").convert_alpha(), (SCREEN_WIDTH, SCREEN_HEIGHT))
+pygame.display.set_caption("Veggie Ninja")
 
 game_lost = False
 points = 0
@@ -39,12 +40,16 @@ class Vegetable(pygame.sprite.Sprite):
         self.velocity = randint(-29, -22)
 
     def random_image(self):
-        images = ["assets/images/alface.png",
-                  "assets/images/brocolis.png",
-                  "assets/images/cenoura.png",
+        images = ["assets/images/lettuce.png",
+                  "assets/images/potato.png",
+                  "assets/images/carrot.png",
+                  "assets/images/garlic.png",
+                  "assets/images/cucumber.png",
+                  "assets/images/pumpkin.png",
                   "assets/images/corn.png",
-                  "assets/images/pepino.png",
-                  "assets/images/pimentao.png"]
+                  "assets/images/cauliflower.png",
+                  "assets/images/onion.png",
+                  "assets/images/radish.png"]
         random_img = random.choice(images)
         return pygame.transform.rotate(pygame.transform.scale(pygame.image.load(random_img), (IMAGE_SIZE, IMAGE_SIZE)), float(randint(0, 360)))
 
