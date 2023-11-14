@@ -11,6 +11,7 @@ SCREEN_WIDTH = 600
 SCREEN_HEIGHT = 800
 IMAGE_SIZE = 75
 GRAVITY = 0.5
+X_FORCE = 0.025
 NUMBER_OF_VEGETABLES = 3
 
 
@@ -56,6 +57,7 @@ class Entity(pygame.sprite.Sprite):
         self.rect = self.image.get_rect()
         self.rect.center = (randint(IMAGE_SIZE, SCREEN_WIDTH - IMAGE_SIZE), SCREEN_HEIGHT)
         self.velocity_y = randint(-29, -22)
+        self.velocity_x = self.get_velocity_x()
 
     def random_image(self):
         if self.is_vegetable:
@@ -67,18 +69,35 @@ class Entity(pygame.sprite.Sprite):
 
     def update(self):
         global game_lost
+
         self.velocity_y += GRAVITY
+
+        if self.velocity_x > 0:
+            self.velocity_x -= X_FORCE
+        else:
+            self.velocity_x += X_FORCE
+
         self.rect.y = self.rect.y + self.velocity_y
+        self.rect.x = self.rect.x + self.velocity_x
 
         if self.rect.bottom > SCREEN_HEIGHT + IMAGE_SIZE:
             if self.is_vegetable:
                 game_lost = True
             else:
                 self.reset()
+    
+    def get_velocity_x(self):
+        if self.rect.x < SCREEN_WIDTH // 2:
+            vel_x = randint(1, 5)
+        else:
+            vel_x = randint(-5, -1)
+        return vel_x
 
     def reset(self):
         self.velocity_y = randint(-29, -22)
+        self.velocity_x = self.get_velocity_x()
         self.rect.center = (randint(IMAGE_SIZE, SCREEN_WIDTH - IMAGE_SIZE), SCREEN_HEIGHT)
+        self.is_vegetable = random.choice([True, False])
         self.image = self.random_image()
 
     def destroy(self):
