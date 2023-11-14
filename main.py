@@ -43,16 +43,14 @@ vegetable_images = ["assets/images/lettuce.png",
                     "assets/images/onion.png",
                     "assets/images/radish.png"]
 
-object_images = ["assets/images/lettuce.png",
-                "assets/images/potato.png",
-                "assets/images/carrot.png",
-                "assets/images/garlic.png"]
+object_images = ["assets/images/bomb.png",
+                "assets/images/stone.png"]
 
 
 class Entity(pygame.sprite.Sprite):
     def __init__(self):
         super().__init__()
-        self.is_vegetable = random.choice([True, False])
+        self.is_vegetable = random.choice([True, True, True, False])
         self.image = self.random_image()
         self.rect = self.image.get_rect()
         self.rect.center = (randint(IMAGE_SIZE, SCREEN_WIDTH - IMAGE_SIZE), SCREEN_HEIGHT)
@@ -88,16 +86,16 @@ class Entity(pygame.sprite.Sprite):
     
     def get_velocity_x(self):
         if self.rect.x < SCREEN_WIDTH // 2:
-            vel_x = randint(1, 5)
+            vel_x = randint(1, 3)
         else:
-            vel_x = randint(-5, -1)
+            vel_x = randint(-3, -1)
         return vel_x
 
     def reset(self):
         self.velocity_y = randint(-29, -22)
         self.velocity_x = self.get_velocity_x()
         self.rect.center = (randint(IMAGE_SIZE, SCREEN_WIDTH - IMAGE_SIZE), SCREEN_HEIGHT)
-        self.is_vegetable = random.choice([True, False])
+        self.is_vegetable = random.choice([True, True, True, False])
         self.image = self.random_image()
 
     def destroy(self):
