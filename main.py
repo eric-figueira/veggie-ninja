@@ -71,16 +71,21 @@ class Entity(pygame.sprite.Sprite):
         self.rect.y = self.rect.y + self.velocity_y
 
         if self.rect.bottom > SCREEN_HEIGHT + IMAGE_SIZE:
-            game_lost = True
+            if self.is_vegetable:
+                game_lost = True
+            else:
+                self.reset()
 
-    def destroy(self):
-        global game_lost
-        if self.is_vegetable:
-            game_lost = True
-            
+    def reset(self):
         self.velocity_y = randint(-29, -22)
         self.rect.center = (randint(IMAGE_SIZE, SCREEN_WIDTH - IMAGE_SIZE), SCREEN_HEIGHT)
         self.image = self.random_image()
+
+    def destroy(self):
+        global game_lost
+        if not self.is_vegetable:
+            game_lost = True
+        self.reset()
 
     def redraw(self, surface):
         surface.blit(self.image, self.rect)
