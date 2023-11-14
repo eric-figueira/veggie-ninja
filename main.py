@@ -11,7 +11,7 @@ SCREEN_WIDTH = 600
 SCREEN_HEIGHT = 800
 IMAGE_SIZE = 75
 GRAVITY = 0.5
-NUMBER_OF_VEGETABLES = 2
+NUMBER_OF_VEGETABLES = 3
 
 
 # Inicializar jogo e configurar
@@ -86,7 +86,7 @@ def game_screen():
     global game_lost
 
     points = 0
-    game_lost = False
+    game_lost = False  
 
     def draw_screen(pts):
         screen.blit(bg, (0, 0))
@@ -98,17 +98,24 @@ def game_screen():
             veggie.redraw(screen)
 
     is_game_running = True
+    is_holding_mouse_down = False
     vegetable_array = [Vegetable() for i in range(NUMBER_OF_VEGETABLES)]
+
     while is_game_running and not game_lost:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 is_game_running = False
             elif event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
-                mouse_pos = pygame.mouse.get_pos()
-                for veggie in vegetable_array:
-                    if veggie.has_been_clicked(mouse_pos):
-                        veggie.destroy()
-                        points += 1
+                is_holding_mouse_down = True
+            elif event.type == pygame.MOUSEBUTTONUP and event.button == 1:
+                is_holding_mouse_down = False
+
+        if is_holding_mouse_down:
+            mouse_pos = pygame.mouse.get_pos()
+            for veggie in vegetable_array:
+                if veggie.has_been_clicked(mouse_pos):
+                    veggie.destroy()
+                    points += 1
 
         for veggie in vegetable_array:
             veggie.update()
@@ -158,7 +165,7 @@ def menu_screen(show_lost_message, points=0):
                 pygame.quit()
                 run = False
 
-            if event.type == pygame.KEYDOWN:
+            if event.type == pygame.KEYDOWN or event.type == pygame.MOUSEBUTTONDOWN:
                 run = False
 
         redraw_menu_screen(show_lost_message, points)
