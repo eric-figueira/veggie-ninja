@@ -30,44 +30,60 @@ points_font = pygame.font.Font("assets/fonts/JANSINA.ttf", 35)
 main_title_font = pygame.font.Font("assets/fonts/JANSINA.ttf", 80)
 press_key_font = pygame.font.Font("assets/fonts/JANSINA.ttf", 30)
 
+# Imagens dos vegetais e dos objetos
+vegetable_images = ["assets/images/lettuce.png",
+                    "assets/images/potato.png",
+                    "assets/images/carrot.png",
+                    "assets/images/garlic.png",
+                    "assets/images/cucumber.png",
+                    "assets/images/pumpkin.png",
+                    "assets/images/corn.png",
+                    "assets/images/cauliflower.png",
+                    "assets/images/onion.png",
+                    "assets/images/radish.png"]
 
-class Vegetable(pygame.sprite.Sprite):
+object_images = ["assets/images/lettuce.png",
+                "assets/images/potato.png",
+                "assets/images/carrot.png",
+                "assets/images/garlic.png"]
+
+
+class Entity(pygame.sprite.Sprite):
     def __init__(self):
         super().__init__()
+        self.is_vegetable = random.choice([True, False])
         self.image = self.random_image()
         self.rect = self.image.get_rect()
         self.rect.center = (randint(IMAGE_SIZE, SCREEN_WIDTH - IMAGE_SIZE), SCREEN_HEIGHT)
-        self.velocity = randint(-29, -22)
+        self.velocity_y = randint(-29, -22)
 
     def random_image(self):
-        images = ["assets/images/lettuce.png",
-                  "assets/images/potato.png",
-                  "assets/images/carrot.png",
-                  "assets/images/garlic.png",
-                  "assets/images/cucumber.png",
-                  "assets/images/pumpkin.png",
-                  "assets/images/corn.png",
-                  "assets/images/cauliflower.png",
-                  "assets/images/onion.png",
-                  "assets/images/radish.png"]
-        random_img = random.choice(images)
+        if self.is_vegetable:
+            random_img = random.choice(vegetable_images)
+        else:
+            random_img = random.choice(object_images)
+
         return pygame.transform.rotate(pygame.transform.scale(pygame.image.load(random_img), (IMAGE_SIZE, IMAGE_SIZE)), float(randint(0, 360)))
 
     def update(self):
         global game_lost
-        self.velocity += GRAVITY
-        self.rect.y = self.rect.y + self.velocity
+        self.velocity_y += GRAVITY
+        self.rect.y = self.rect.y + self.velocity_y
 
         if self.rect.bottom > SCREEN_HEIGHT + IMAGE_SIZE:
             game_lost = True
 
     def destroy(self):
-        self.velocity = randint(-29, -22)
+        global game_lost
+        if self.is_vegetable:
+            game_lost = True
+            
+        self.velocity_y = randint(-29, -22)
         self.rect.center = (randint(IMAGE_SIZE, SCREEN_WIDTH - IMAGE_SIZE), SCREEN_HEIGHT)
         self.image = self.random_image()
 
     def redraw(self, surface):
-         surface.blit(self.image, self.rect)
+        surface.blit(self.image, self.rect)
 
     def has_been_clicked(self, mouse_pos):
         return self.rect.collidepoint(mouse_pos)
@@ -94,12 +110,12 @@ def game_screen():
         points = points_font.render(f"Points: {pts}", True, (255, 255, 255))
         screen.blit(points, (10, 10))
 
-        for veggie in vegetable_array:
-            veggie.redraw(screen)
+        for entity in entity_array:
+            entity.redraw(screen)
 
     is_game_running = True
     is_holding_mouse_down = False
-    vegetable_array = [Vegetable() for i in range(NUMBER_OF_VEGETABLES)]
+    entity_array = [Entity() for i in range(NUMBER_OF_VEGETABLES)]
 
     while is_game_running and not game_lost:
         for event in pygame.event.get():
@@ -112,13 +128,13 @@ def game_screen():
 
         if is_holding_mouse_down:
             mouse_pos = pygame.mouse.get_pos()
-            for veggie in vegetable_array:
-                if veggie.has_been_clicked(mouse_pos):
-                    veggie.destroy()
+            for entity in entity_array:
+                if entity.has_been_clicked(mouse_pos):
+                    entity.destroy()
                     points += 1
 
-        for veggie in vegetable_array:
-            veggie.update()
+        for entity in entity_array:
+            entity.update()
 
         draw_screen(points)
 
