@@ -1,19 +1,12 @@
-import random
-import pygame
 from random import randint
 from pygame.locals import *
+
+from config import *
+from assets import *
+
 import math
-
-
-# Constantes
-FPS = 60
-SCREEN_WIDTH = 600
-SCREEN_HEIGHT = 800
-IMAGE_SIZE = 75
-GRAVITY = 0.5
-X_FORCE = 0.025
-NUMBER_OF_VEGETABLES = 3
-
+import random
+import pygame
 
 # Inicializar jogo e configurar
 pygame.init()
@@ -24,28 +17,6 @@ pygame.display.set_caption("Veggie Ninja")
 
 game_lost = False
 points = 0
-
-# Carregar fontes
-you_lost_font = pygame.font.Font("assets/fonts/JANSINA.ttf", 60)
-points_font = pygame.font.Font("assets/fonts/JANSINA.ttf", 35)
-main_title_font = pygame.font.Font("assets/fonts/JANSINA.ttf", 80)
-press_key_font = pygame.font.Font("assets/fonts/JANSINA.ttf", 30)
-
-# Imagens dos vegetais e dos objetos
-vegetable_images = ["assets/images/lettuce.png",
-                    "assets/images/potato.png",
-                    "assets/images/carrot.png",
-                    "assets/images/garlic.png",
-                    "assets/images/cucumber.png",
-                    "assets/images/pumpkin.png",
-                    "assets/images/corn.png",
-                    "assets/images/cauliflower.png",
-                    "assets/images/onion.png",
-                    "assets/images/radish.png"]
-
-object_images = ["assets/images/bomb.png",
-                "assets/images/stone.png"]
-
 
 class Entity(pygame.sprite.Sprite):
     def __init__(self):
@@ -71,9 +42,9 @@ class Entity(pygame.sprite.Sprite):
         self.velocity_y += GRAVITY
 
         if self.velocity_x > 0:
-            self.velocity_x -= X_FORCE
+            self.velocity_x -= HORIZONTAL_FORCE
         else:
-            self.velocity_x += X_FORCE
+            self.velocity_x += HORIZONTAL_FORCE
 
         self.rect.y = self.rect.y + self.velocity_y
         self.rect.x = self.rect.x + self.velocity_x
@@ -213,4 +184,5 @@ def menu_screen(show_lost_message, points=0):
     game_screen()
 
 
-menu_screen(False)
+if __name__ == "__main__":
+    menu_screen(False)
