@@ -136,11 +136,7 @@ def game_screen():
         pygame.display.update()
         pygame.time.Clock().tick(FPS)
 
-    if game_lost:
-        menu_screen(True, points)
-    else:
-        # Não quero fechar o jogo, quero ir para a tela inicial, por isso nao faço pygame.quit()
-        menu_screen(False)
+    menu_screen(game_lost, points)
 
 
 def redraw_menu_screen(has_lost_message, points):
