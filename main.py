@@ -132,12 +132,15 @@ def game_screen():
         points = points_font.render(f"Points: {pts}", True, (255, 255, 255))
         screen.blit(points, (10, 10))
 
-        for entity in entity_array:
+        for entity in entities_sprite_groups:
             entity.redraw(screen)
 
     is_game_running = True
     is_holding_mouse_down = False
-    entity_array = [Entity() for i in range(NUMBER_OF_VEGETABLES)]
+    entities_sprite_groups = pygame.sprite.Group()
+
+    for _ in range(NUMBER_OF_VEGETABLES):
+        entities_sprite_groups.add(Entity())
 
     while is_game_running and not game_lost:
         for event in pygame.event.get():
@@ -150,13 +153,12 @@ def game_screen():
 
         if is_holding_mouse_down:
             mouse_pos = pygame.mouse.get_pos()
-            for entity in entity_array:
+            for entity in entities_sprite_groups:
                 if entity.has_been_clicked(mouse_pos):
                     entity.destroy()
                     points += 1
 
-        for entity in entity_array:
-            entity.update()
+        entities_sprite_groups.update()
 
         draw_screen(points)
 
