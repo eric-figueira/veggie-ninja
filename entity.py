@@ -38,10 +38,11 @@ class Entity(pygame.sprite.Sprite):
         self.rect.x = self.rect.x + self.velocity_x
 
         if self.rect.bottom > SCREEN_HEIGHT + IMAGE_SIZE:
-            if self.is_vegetable:
-                self.game_lost_callback(True)
-            else:
-                self.reset()
+            if self.rect.left + IMAGE_SIZE >= 0 and self.rect.right - IMAGE_SIZE < SCREEN_WIDTH:
+              if self.is_vegetable:
+                  self.game_lost_callback(True)
+              else:
+                  self.reset()
 
     def get_velocity_x(self):
         if self.rect.x < SCREEN_WIDTH // 2:
