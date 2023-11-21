@@ -15,11 +15,9 @@ screen = pygame.display.set_mode([SCREEN_WIDTH, SCREEN_HEIGHT])
 bg = pygame.transform.scale(pygame.image.load("assets/images/background_image.jpg").convert_alpha(), (SCREEN_WIDTH, SCREEN_HEIGHT))
 pygame.display.set_caption("Veggie Ninja")
 
-game_lost = False
-points = 0
 
 class Entity(pygame.sprite.Sprite):
-    def __init__(self):
+    def __init__(self, game_lost_callback):
         super().__init__()
         self.is_vegetable = random.choice([True, True, True, False])
         self.image = self.random_image()
@@ -27,6 +25,7 @@ class Entity(pygame.sprite.Sprite):
         self.rect.center = (randint(IMAGE_SIZE, SCREEN_WIDTH - IMAGE_SIZE), SCREEN_HEIGHT)
         self.velocity_y = randint(-29, -22)
         self.velocity_x = self.get_velocity_x()
+        self.game_lost_callback = game_lost_callback
 
     def random_image(self):
         if self.is_vegetable:
@@ -37,8 +36,6 @@ class Entity(pygame.sprite.Sprite):
         return pygame.transform.rotate(pygame.transform.scale(pygame.image.load(random_img), (IMAGE_SIZE, IMAGE_SIZE)), float(randint(0, 360)))
 
     def update(self):
-        global game_lost
-
         self.velocity_y += GRAVITY
 
         if self.velocity_x > 0:
@@ -51,7 +48,7 @@ class Entity(pygame.sprite.Sprite):
 
         if self.rect.bottom > SCREEN_HEIGHT + IMAGE_SIZE:
             if self.is_vegetable:
-                game_lost = True
+                self.game_lost_callback(True)
             else:
                 self.reset()
     
@@ -70,9 +67,8 @@ class Entity(pygame.sprite.Sprite):
         self.image = self.random_image()
 
     def destroy(self):
-        global game_lost
         if not self.is_vegetable:
-            game_lost = True
+            self.game_lost_callback(True)
         self.reset()
 
     def redraw(self, surface):
@@ -91,8 +87,6 @@ def sine_wave(speed, time, how_far, overallY):
 
 
 def game_screen():
-    global points
-    global game_lost
 
     points = 0
     game_lost = False  
@@ -105,13 +99,17 @@ def game_screen():
 
         for entity in entities_sprite_groups:
             entity.redraw(screen)
+    
+    def game_lost_callback(set_lost):
+        nonlocal game_lost
+        game_lost = set_lost
 
     is_game_running = True
     is_holding_mouse_down = False
     entities_sprite_groups = pygame.sprite.Group()
 
     for _ in range(NUMBER_OF_VEGETABLES):
-        entities_sprite_groups.add(Entity())
+        entities_sprite_groups.add(Entity(game_lost_callback))
 
     while is_game_running and not game_lost:
         for event in pygame.event.get():
